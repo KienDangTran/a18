@@ -1,0 +1,67 @@
+timezone: Asia/Ho_Chi_Minh
+check-user-scopes: true
+secret: "{bcrypt}$2a$10$EOs8VROb14e7ZnydvXECA.4LoIhPOoFHKvVF/iBZ/ker17Eocz4Vi" # password
+
+jwt:
+  certificate:
+    store:
+      file: classpath:/certificate/jwt.jks
+      password: password
+    key:
+      alias: a18
+      password: password
+
+security:
+  oauth2:
+    resource:
+      id: a18-oauth2
+    client:
+      grant-type: password
+      authorities: ROLE_TRUSTED_CLIENT
+      scope: ROLE_TRUSTED_CLIENT
+      client-id: trusted-client
+      client-secret: password
+      auto-approve-scopes: true
+      access-token-validity-seconds: 86400
+      refresh-token-validity-seconds: 86400
+      authentication-scheme: header
+      token-name: token
+
+server:
+  port: 7070
+  compression:
+    enable: true
+    mime-types: application/hal+json,application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: auth-server
+info:
+  id: ${spring.application.name}
+logging:
+  level:
+    com.gee: DEBUG
+    org.springframework.security: DEBUG
+
+---
+
+spring:
+  profiles: dev
+  datasource:
+    password: ${POSTGRES_PASSWORD:postgres}
+    username: ${POSTGRES_USER:kien}
+    platform: 'postgres'
+    url: jdbc:postgresql://${DOCKER_HOST_IP:localhost}:5432/${POSTGRES_DB:a18}?currentSchema=auth&stringtype=unspecified&preferQueryMode=simple
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+  output:
+    ansi:
+      enabled: always

@@ -1,0 +1,64 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven { url = "https://plugins.gradle.org/m2/" }
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    classpath("com.bmuschko:gradle-docker-plugin:3.6.0")
+  }
+}
+
+allprojects {
+  group = "com.gee"
+  version = "${version}"
+}
+
+subprojects {
+
+  apply plugin: "java"
+  apply plugin: "io.spring.dependency-management"
+  apply plugin: 'com.bmuschko.docker-spring-boot-application'
+
+  sourceCompatibility = 10
+  targetCompatibility = 10
+
+  repositories {
+    mavenCentral()
+    jcenter()
+    maven { url = "https://repo.spring.io/snapshot" }
+    maven { url = "https://repo.spring.io/milestone" }
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+  }
+
+  dependencies {
+    compile("javax.xml.bind:jaxb-api:2.3.0")
+    compile("org.glassfish.jaxb:jaxb-runtime:2.3.0")
+    compile("javax.activation:activation:1.1.1")
+
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+  }
+
+  docker {
+    registryCredentials {
+      username = getConfigurationProperty('DOCKER_USERNAME', 'docker.username')
+      password = getConfigurationProperty('DOCKER_PASSWORD', 'docker.password')
+      email = getConfigurationProperty('DOCKER_EMAIL', 'docker.email')
+    }
+
+    springBootApplication {
+      baseImage = 'openjdk:10'
+      tag = "kiendang/${archivesBaseName}:${version}"
+    }
+  }
+}
+
+String getConfigurationProperty(String envVar, String sysProp) {
+  System.getenv(envVar) ?: project.findProperty(sysProp)
+}

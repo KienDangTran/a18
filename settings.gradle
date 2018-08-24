@@ -1,0 +1,4 @@
+rootProject.name = 'a18'
+
+include 'common'
+include 'auth-server'

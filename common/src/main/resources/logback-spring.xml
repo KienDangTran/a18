@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <springProperty
+      scope="context"
+      name="devLogLevel"
+      source="logging.level.dev"
+      defaultValue="DEBUG"
+  />
+  <springProperty
+      scope="context"
+      name="timezone"
+      source="timezone"
+      defaultValue="Asia/Ho_Chi_Minh"
+  />
+  <!--<springProperty-->
+  <!--scope="context"-->
+  <!--name="productionLogLevel"-->
+  <!--source="logging.level.production"-->
+  <!--defaultValue="INFO"-->
+  <!--/>-->
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{yyyy-MM-dd HH:mm:ss, ${timezone}} %highlight(%-5level) %cyan([%-12.12thread]) %green([%-25.25file:%-4.4line]) %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <!--<appender name="STASH" class="ch.qos.logback.core.ConsoleAppender">-->
+  <!--<encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
+  <!--<includeContext>false</includeContext>-->
+  <!--<includeMdc>true</includeMdc>-->
+  <!--<includeMdcKeyName>staff</includeMdcKeyName>-->
+  <!--<includeMdcKeyName>action</includeMdcKeyName>-->
+  <!--<includeMdcKeyName>object</includeMdcKeyName>-->
+  <!--<includeMdcKeyName>field</includeMdcKeyName>-->
+  <!--<includeMdcKeyName>old-value</includeMdcKeyName>-->
+  <!--<includeMdcKeyName>new-value</includeMdcKeyName>-->
+  <!--<includeMdcKeyName>req.remoteHost</includeMdcKeyName>-->
+  <!--</encoder>-->
+  <!--</appender>-->
+
+  <springProfile name="dev">
+    <logger name="com.a18" level="${devLogLevel}" additivity="false">
+      <appender-ref ref="STDOUT"/>
+    </logger>
+    <root level="ERROR">
+      <appender-ref ref="STDOUT"/>
+    </root>
+  </springProfile>
+
+  <!--<springProfile name="production">-->
+  <!--<logger name="com.a18" level="${productionLogLevel}">-->
+  <!--<appender-ref ref="STASH"/>-->
+  <!--</logger>-->
+  <!--</springProfile>-->
+</configuration>

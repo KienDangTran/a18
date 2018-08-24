@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: auth-server
+#  cloud:
+#    config:
+#      uri: http://${DOCKER_HOST_IP:localhost}:8888
